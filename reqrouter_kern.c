@@ -8,9 +8,8 @@
 #include <uapi/linux/in.h>
 #include <uapi/linux/udp.h>
 #include <asm/byteorder.h>
-//#include <stdio.h>
-
 #include "bpf_helpers.h"
+
 /* Power-of-2 number of sockets per function */
 #define MAX_SOCKS 1
 

@@ -3,7 +3,7 @@
 /* Extended by Marius Gerling 2018 */
 
 #include "reqrouter.h"
-#include "../common/functions.h"
+#include "functions.h"
 
 static u32 opt_xdp_flags;
 static const char *opt_if = "";

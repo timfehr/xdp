@@ -5,9 +5,8 @@
  - [llc](https://apt.llvm.org/) > 8
  - Install other deps
 ```bash
-    sudo apt install -y make gcc libssl-dev bc libelf-dev libpcap-dev gcc-multilib libncurses5-dev git pkg-config libmnl0 bison flex graphviz ansible iperf iperf3
+    sudo apt install -y make gcc libssl-dev bc libelf-dev gcc-multilib libncurses5-dev git pkg-config libmnl0 bison flex
 ```
-
 ### Install modified kernel
 ```bash
     #Download Kernel
@@ -25,15 +24,25 @@
 ### Build and link BPF libs
 ```bash
     make -C /lib/modules/$(uname -r)/build/tools/lib/bpf/
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/lib/modules/<KERNEL VERSION>/build/tools/lib/bpf/
 ```
 
 ## Installation
+### Build with dynamic libs
 ```bash
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/lib/modules/<KERNEL VERSION>/build/tools/lib/bpf/
     git clone https://git.uniberg.com/tim.fehr/xdp.git
     cd xdp
     nano Makefile   #Change NETDEVICE in line 1
     make
     #To build and run
     make run
+```
+### Build with static libs
+```bash
+    git clone https://git.uniberg.com/tim.fehr/xdp.git
+    cd xdp
+    nano Makefile   #Change NETDEVICE in line 1
+    make static
+    #To build and run
+    make run_static
 ```

@@ -1,6 +1,7 @@
 NETDEVICE = ens160
 BINARY = reqrouter
 KERN_OBJ = $(BINARY)_kern.o
+BINARY_STATIC = $(BINARY)_static
 
 # Notice: the kbuilddir can be redefined on make cmdline
 kbuilddir ?= /lib/modules/$(shell uname -r)/build/
@@ -47,7 +48,12 @@ $(KERN_OBJ): $(KERN_OBJ:%.o=%.c)
 
 # Userspace program with dynamic (shared) lib
 $(BINARY): %: $(BINARY)_user.c functions.h Makefile
-	gcc -g $(CFLAGS) $(OBJECTS) -o reqrouter $< reqrouter.c -lbpf -lelf -pthread
+	gcc -g $(CFLAGS) $(OBJECTS) -o $(BINARY) $< $(BINARY).c -lbpf -lelf -pthread
+
+
+# Userspace program with dynamic (shared) lib
+$(BINARY_STATIC): %: $(BINARY)_user.c functions.h Makefile
+	gcc -g $(CFLAGS) $(OBJECTS) -o $(BINARY) $< $(BINARY).c -l:libbpf.a -lelf -pthread
 
 # Catchall for the objects
 %.o: %.c
@@ -55,8 +61,15 @@ $(BINARY): %: $(BINARY)_user.c functions.h Makefile
 
 .PHONY: clean
 clean:
-	rm -rf *.o *.ll $(BINARY)
+	rm -rf *.o *.ll $(BINARY) $(BINARY_STATIC)
 
 .PHONY: run
 run: $(BINARY) $(KERN_OBJ)
+	sudo ./$(BINARY) -i $(NETDEVICE) -S
+
+.PHONY: static
+static: $(BINARY_STATIC) $(KERN_OBJ)
+
+.PHONY: run_static
+run_static: $(BINARY_STATIC) $(KERN_OBJ)
 	sudo ./$(BINARY) -i $(NETDEVICE) -S

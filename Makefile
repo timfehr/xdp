@@ -37,6 +37,7 @@ CFLAGS += -I$(KERNEL)tools/include
 CFLAGS += -I$(KERNEL)tools/lib
 CFLAGS += -I$(KERNEL)tools/perf/include
 CFLAGS += -L$(KERNEL)tools/lib/bpf
+CFLAGS += -L$(shell pwd)/lib
 
 all: $(KERN_OBJ) $(BINARY)
 
@@ -48,12 +49,11 @@ $(KERN_OBJ): $(KERN_OBJ:%.o=%.c)
 
 # Userspace program with dynamic (shared) lib
 $(BINARY): %: $(BINARY)_user.c functions.h Makefile
-	gcc -g $(CFLAGS) $(OBJECTS) -o $(BINARY) $< $(BINARY).c -lbpf -lelf -pthread
-
+	gcc -g $(CFLAGS) -o $(BINARY) $< -lxdp -lbpf -lelf
 
 # Userspace program with dynamic (shared) lib
 $(BINARY_STATIC): %: $(BINARY)_user.c functions.h Makefile
-	gcc -g $(CFLAGS) $(OBJECTS) -o $(BINARY) $< $(BINARY).c -l:libbpf.a -lelf -pthread
+	gcc -g $(CFLAGS) -o $(BINARY) $< -l:libxdp.a -l:libbpf.a -lelf
 
 # Catchall for the objects
 %.o: %.c

@@ -2,7 +2,12 @@
 /* Copyright(c) 2017 - 2018 Intel Corporation. */
 /* Extended by Marius Gerling 2018 */
 
-#include "reqrouter.h"
+#include <stdio.h>
+#include <string.h>
+#include <string.h>
+#include <signal.h>
+#include <locale.h>
+#include "lib/reqrouter.h"
 #include "functions.h"
 
 static u32 opt_xdp_flags;

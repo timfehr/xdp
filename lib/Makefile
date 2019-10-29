@@ -1,5 +1,6 @@
 LIB = libxdp
-SOURCE = reqrouter
+SOURCE = libxdp
+PREFIX = /usr/local/
 
 # Notice: the kbuilddir can be redefined on make cmdline
 kbuilddir ?= /lib/modules/$(shell uname -r)/build/
@@ -32,3 +33,18 @@ static:	$(LIB)
 .PHONY: shared
 shared: $(LIB)
 	gcc -shared $(LIB).o -o $(LIB).so
+
+.PHONY: install
+install:
+	cp $(LIB).a $(PREFIX)lib/$(LIB).a
+	cp $(LIB).so $(PREFIX)lib/$(LIB).so
+	cp *.h $(PREFIX)include/
+
+.PHONY: uninstall
+uninstall:
+	rm $(PREFIX)lib/$(LIB).a
+	rm $(PREFIX)lib/$(LIB).so
+	rm $(PREFIX)include/$(LIB).h
+	rm $(PREFIX)include/perf-sys.h
+	rm $(PREFIX)include/bpf_helpers.h
+	rm $(PREFIX)include/bpf_util.h

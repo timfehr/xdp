@@ -5,7 +5,7 @@
 #ifndef REQROUTER_C
 #define REQROUTER_C
 
-#include "reqrouter.h"
+#include "libxdp.h"
 
 unsigned header_length = sizeof(struct ether_header) + sizeof(struct iphdr) + sizeof(struct udphdr);
 

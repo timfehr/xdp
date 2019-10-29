@@ -1,4 +1,4 @@
-NETDEVICE = enp4s0f1
+NETDEVICE = ens160
 BINARY = reqrouter
 KERN_OBJ = $(BINARY)_kern.o
 
@@ -35,26 +35,19 @@ CFLAGS += -I$(KERNEL)usr/include
 CFLAGS += -I$(KERNEL)tools/include
 CFLAGS += -I$(KERNEL)tools/lib
 CFLAGS += -I$(KERNEL)tools/perf/include
-
-# Objects that xxx_user program is linked with:
-OBJECT_BPF     = $(KERNEL)tools/lib/bpf/bpf.o
-OBJECT_BTF     = $(KERNEL)tools/lib/bpf/btf.o
-OBJECT_LIBBPF  = $(KERNEL)tools/lib/bpf/libbpf.o
-OBJECT_BPFSTR  = $(KERNEL)tools/lib/bpf/str_error.o
-OBJECT_NLATTR  = $(KERNEL)tools/lib/bpf/nlattr.o
-OBJECTS = $(OBJECT_BPF) $(OBJECT_BTF) $(OBJECT_LIBBPF) $(OBJECT_BPFSTR) $(OBJECT_NLATTR)
+CFLAGS += -L$(KERNEL)tools/lib/bpf
 
 all: $(KERN_OBJ) $(BINARY)
 
 # BPF Kernel Object
 $(KERN_OBJ): $(KERN_OBJ:%.o=%.c)
-	clang $(NOSTDINC_FLAGS) $(LINUXINCLUDE) $(HOSTCFLAGS) \
+	clang-9 $(NOSTDINC_FLAGS) $(LINUXINCLUDE) $(HOSTCFLAGS) \
 		-S -emit-llvm -c $<
-	llc -march=bpf -filetype=obj -o $@ $(KERN_OBJ:%.o=%.ll)
+	llc-9 -march=bpf -filetype=obj -o $@ $(KERN_OBJ:%.o=%.ll)
 
-# Userspace program
-$(BINARY): %: $(BINARY)_user.c ../common/functions.h $(OBJECTS) Makefile
-	gcc -g $(CFLAGS) $(OBJECTS) -lelf -pthread -o reqrouter $< reqrouter.c
+# Userspace program with dynamic (shared) lib
+$(BINARY): %: $(BINARY)_user.c functions.h Makefile
+	gcc -g $(CFLAGS) $(OBJECTS) -o reqrouter $< reqrouter.c -lbpf -lelf -pthread
 
 # Catchall for the objects
 %.o: %.c

@@ -13,20 +13,14 @@
 #include <linux/if_xdp.h>
 #include <linux/if_ether.h>
 #include <net/if.h>
-#include <signal.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <net/ethernet.h>
 #include <sys/resource.h>
 #include <sys/socket.h>
 #include <sys/mman.h>
 #include <sys/sysinfo.h>
-#include <time.h>
 #include <unistd.h>
-#include <pthread.h>
-#include <locale.h>
 #include <sys/types.h>
 #include <poll.h>
 
